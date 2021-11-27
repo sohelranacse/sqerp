@@ -1,25 +1,36 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit"
-import cartReducer from "./cartRedux"
 import userReducer from "./userRedux"
-import {
-  persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist'
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-const persistConfig = {
-  key: 'root',
-  version: 1,
-  storage,
-}
-const rootReducer = combineReducers({ user: userReducer, cart: cartReducer });
+// custom reducer
+import hrdReducer from "./hrdRedux"
+import salesReducer from "./salesRedux"
 
+// constant reducer configuration
+const persistConfig = {
+  key: 'root', version: 1, storage,
+  blacklist: ['hrd','sales']
+}
+
+// custom reducer configuration
+const hrdConfig = {
+  key: 'hrd', storage,
+  blacklist: ['employeeSearchList','com_name_search']
+}
+const salesConfig = {
+  key: 'sales', storage,
+  blacklist: ['DailySalesCollectionList','ItemTypeNameRedux']
+}
+
+// root reducer
+const rootReducer = combineReducers({
+  user: userReducer,
+  hrd: persistReducer(hrdConfig, hrdReducer),
+  sales: persistReducer(salesConfig, salesReducer)
+})
+
+// reducer persisted
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
@@ -27,6 +38,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        immutableCheck: false,
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     })
