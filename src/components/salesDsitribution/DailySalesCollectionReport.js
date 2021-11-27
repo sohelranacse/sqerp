@@ -74,8 +74,8 @@ export default function DailySalesCollectionReport() {
       getItemtype()
 
       
-    } catch (err) { }
-  }, [user.token])
+    } catch (err) { dispatch(DSalesCollectionSearchFailure()) }
+  }, [user.token]) // eslint-disable-line
 
   // search
   const handleSubmit = (e) => {
