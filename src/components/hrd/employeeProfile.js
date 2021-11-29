@@ -73,11 +73,10 @@ export default function UserProfile() {
         setbusinessUnit(res.data.response)
       }
     }
-    getBusinessUnit()
-
-    setTimeout(() => setIsLoading(false), 100);
+    getBusinessUnit()    
   }, [user.token])
 
+  setTimeout(() => setIsLoading(false), 100);
   return (
     <div className="container-fluid">
       {isLoading ? <Skeleton />
