@@ -1,10 +1,11 @@
+/* Admin panel custom */
 .control-label {
   text-transform: uppercase;
   font-weight: 500;
   font-size: 12px;
 }
 .mt-30 {
-  margin-top: 30px;
+  margin-top: 26px;
 }
 table th {
   font-weight: 500;
@@ -15,4 +16,16 @@ table td {
 }
 .required {
   color: red;
+}
+
+/* React Select Combo box Custom */
+.combo__value-container{
+  margin-top: -6px;
+}
+.css-1s2u09g-control, .css-1pahdxg-control {
+  height: 32px !important;
+  min-height: unset !important;
+}
+.combo__indicator {
+  margin-top: -3px;
 }

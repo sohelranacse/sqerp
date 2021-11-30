@@ -1,15 +1,17 @@
+import { Helmet } from "react-helmet"
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Loader from '../Loader'
-import Skeleton from "../skeleton/Skeleton";
+import Skeleton from "../skeleton/Skeleton"
+import Select from 'react-select'
+import ReactHTMLTableToExcel from "react-html-table-to-excel"
 
 import { DSalesCollectionSearchStart, DSalesCollectionSearchSuccess, DSalesCollectionSearchFailure } from '../../redux/salesRedux'
 const BASE_URL = process.env.REACT_APP_API
 
 export default function DailySalesCollectionReport() {
-  const [isLoading, setIsLoading] = useState(true);
-  document.title = "Daily Sales & Collection Report"
+  const [isLoading, setIsLoading] = useState(true)
   window.scrollTo(0, 0)
 
   const dispatch = useDispatch()
@@ -30,8 +32,8 @@ export default function DailySalesCollectionReport() {
   const [toDate, setToDate] = useState(dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate())
 
   const handleItemType = (e) => {
-    setType_id(e.target.value)
-    setType_name(e.target.options[e.target.selectedIndex].text)
+    setType_id(e.value)
+    setType_name(e.label)
   }
 
   // get all business unit
@@ -106,6 +108,7 @@ export default function DailySalesCollectionReport() {
   
   return (
     <div className="container-fluid">
+      <Helmet><title>Daily Sales & Collection Report</title></Helmet>
       {isLoading ? <Skeleton />
       : (
         <div className="row mb-4">
@@ -121,17 +124,15 @@ export default function DailySalesCollectionReport() {
               <form onSubmit={handleSubmit}>
 
                 <div className="row col-md-12">
-
+                      
                   <div className="form-group col-md-4">
                     <label className="control-label">Item Type <span className="required">*</span></label>
-                    <select id="com_id" className="form-control" onChange={handleItemType}>
-                      <option value="ALL">ALL</option>
-                      {
-                        ItemTypeList.map((iType, i) => (
-                          <option key={i} value={iType.Type_id}>{iType.Item_Type}</option>
-                        ))
-                      }
-                    </select>                    
+                    <Select
+                      classNamePrefix="combo"
+                      defaultValue={{ label: "ALL", value: "ALL" }}
+                      onChange={handleItemType}
+                      options={ItemTypeList.map((iType) => ({ value: iType.Type_id, label: iType.Item_Type }))}
+                    />    
                   </div>
                   <div className="form-group col-md-2">
                     <label className="control-label">From Date <span className="required">*</span></label>
@@ -159,11 +160,10 @@ export default function DailySalesCollectionReport() {
               {error && <div className="alert alert-warning fade show" role="alert">{ errorMsg }</div> }
               
               <div className="table-responsive">
-                <table className="table table-striped">
+                <table className="table table-striped" id="datatable">
                   <thead>
                     <tr>
-                      {/* <th colSpan="26">{ com_name_search ? `Employee information Report Business Unit: ${com_name_search}` : "Employee information Report" }</th> */}
-                          <th colSpan="6">Daily Sales Collection Report Item Type: {ItemTypeNameRedux}, From {fromDate} To {toDate}</th>
+                      <th colSpan="6">Daily Sales Collection Report Item Type: {ItemTypeNameRedux}, From {fromDate} To {toDate}</th>
                     </tr>
                   </thead>
                   <thead>
@@ -187,9 +187,21 @@ export default function DailySalesCollectionReport() {
                           <td className="text-right">{ DSCRow.Total_Collection }</td>
                         </tr>
                       ))}
-                    </tbody>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colSpan="2">Total</td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
                   </table>
                 </div>
+                
+                <ReactHTMLTableToExcel
+                  className="btn btn-primary mt-30" table="datatable"
+                  filename={new Date().toLocaleString()}
+                  sheet="tablexls" buttonText="Export to Excel"
+                />
 
 
               </div>

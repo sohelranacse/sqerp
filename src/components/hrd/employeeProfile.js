@@ -1,15 +1,18 @@
+import { Helmet } from "react-helmet"
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Loader from '../Loader'
-import Skeleton from "../skeleton/Skeleton";
+import Skeleton from "../skeleton/Skeleton"
+import Select from 'react-select'
+import ReactHTMLTableToExcel from 'react-html-table-to-excel'
 
 import { EmployeeSearchStart, EmployeeSearchSuccess, EmployeeSearchFailure } from '../../redux/hrdRedux'
 const BASE_URL = process.env.REACT_APP_API
 
+
 export default function UserProfile() {
-  const [isLoading, setIsLoading] = useState(true);
-  document.title = "Employee Profile"
+  const [isLoading, setIsLoading] = useState(true)
   window.scrollTo(0, 0)
   
   const dispatch = useDispatch()
@@ -28,8 +31,10 @@ export default function UserProfile() {
   formData.append("com_id", com_id)
 
   const handleBusinessUnit = (e) => {
-    setComId(e.target.value)
-    setComName(e.target.options[e.target.selectedIndex].text)
+    // setComId(e.target.value)
+    // setComName(e.target.options[e.target.selectedIndex].text)
+    setComId(e.value)
+    setComName(e.label)
   }
 
 
@@ -76,13 +81,13 @@ export default function UserProfile() {
     getBusinessUnit()    
   }, [user.token])
 
-  setTimeout(() => setIsLoading(false), 100);
+  setTimeout(() => setIsLoading(false), 100)
   return (
     <div className="container-fluid">
+      <Helmet><title>Employee Profile</title></Helmet>
       {isLoading ? <Skeleton />
       : (
         <div className="row mb-4">
-
           <div className="col-lg-12">
 
             <div className="card shadow mb-4">
@@ -94,18 +99,15 @@ export default function UserProfile() {
                 <form onSubmit={handleSubmit}>
 
                   <div className="row col-md-12">
-
+                    
                     <div className="form-group col-md-4">
                       <label className="control-label">Business Unit</label>
-                      <select id="com_id" className="form-control" onChange={handleBusinessUnit}>
-                        <option value="ALL">ALL</option>
-                        {
-                          businessUnit.map((bUnit, i) => (
-                            <option key={i} value={bUnit.com_id}>{bUnit.company_name}</option>
-                          ))
-                        }
-                      </select>
-                      
+                      <Select
+                        classNamePrefix="combo"
+                        defaultValue={{ label: "ALL", value: "ALL" }}
+                        onChange={handleBusinessUnit}
+                        options={businessUnit.map((bUnit) => ({ value: bUnit.com_id, label: bUnit.company_name }))}
+                      />
                     </div>
 
                     <div className="form-group col-md-1">
@@ -129,7 +131,7 @@ export default function UserProfile() {
                 }
 
                 <div className="table-responsive">
-                  <table className="table table-striped">
+                  <table className="table table-striped" id="datatable">
                     <thead>
                       <tr>
                         <th colSpan="26">{ com_name_search ? `Employee information Report Business Unit: ${com_name_search}` : "Employee information Report" }</th>
@@ -197,8 +199,12 @@ export default function UserProfile() {
                     </tbody>
                   </table>
                 </div>
-
-
+                  
+                <ReactHTMLTableToExcel
+                  className="btn btn-primary mt-30" table="datatable"
+                  filename={new Date().toLocaleString()}
+                  sheet="tablexls" buttonText="Export to Excel"
+                />
 
               </div>
             </div>

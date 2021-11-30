@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet"
 import { useSelector } from "react-redux"
 
 export default function UserProfile() {
@@ -8,6 +9,7 @@ export default function UserProfile() {
 
   return (
     <div className="container-fluid">
+      <Helmet><title>My Profile</title></Helmet>
       {/* <h1 className="h3 mb-4 text-gray-800">Profile</h1> */}
 
       <div className="row mb-4">

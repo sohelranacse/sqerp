@@ -1,7 +1,7 @@
+import { Helmet } from "react-helmet"
 import { useSelector } from "react-redux";
 
 export default function Dashboard() {
-  document.title = "Dashboard"
   window.scrollTo(0, 0)
 
   const { currentUser } = useSelector((state) => state.user)
@@ -9,6 +9,7 @@ export default function Dashboard() {
 
   return (
     <div className="container-fluid">
+      <Helmet><title>Dashboard</title></Helmet>
 
       {/* <!-- Page Heading --> */}
       <div className="d-sm-flex align-items-center justify-content-between mb-4">

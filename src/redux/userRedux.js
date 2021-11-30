@@ -24,6 +24,7 @@ const userSlice = createSlice({
       state.isFetching = false
       state.currentUser = null
       state.error = false
+      window.localStorage.clear()
     }
   }
 })

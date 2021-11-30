@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { Helmet } from "react-helmet"
+import { useState } from "react"
 import axios from 'axios'
 import { loginFailure, loginStart, loginSuccess } from "../redux/userRedux"
 import { useDispatch, useSelector } from "react-redux";
 const BASE_URL = process.env.REACT_APP_API
 
 export default function Login() {
-  document.title = "Login | SQ Consumers - Enterprise Resource Planning"
   
   const { isFetching } = useSelector((state) => state.user)
   
@@ -46,6 +46,7 @@ export default function Login() {
   
   return (
     <div className="container">
+      <Helmet><title>Login | SQ Consumers - Enterprise Resource Planning</title></Helmet>
 
       {/* <!-- Outer Row --> */}
       <div className="row justify-content-center">
